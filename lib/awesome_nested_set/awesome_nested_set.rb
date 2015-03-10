@@ -187,7 +187,11 @@ module CollectiveIdea #:nodoc:
             if acts_as_nested_set_options[:scope]
               scope = lambda{|node|
                 scope_column_names.inject(""){|str, column_name|
-                  str << "AND #{connection.quote_column_name(column_name)} = #{connection.quote(node.send(column_name.to_sym))} "
+                  if node.send(column_name.to_sym).nil?
+                    str << "AND #{connection.quote_column_name(column_name)} IS NULL"
+                  else
+                    str << "AND #{connection.quote_column_name(column_name)} = #{connection.quote(node.send(column_name.to_sym))} "
+                  end
                 }
               }
             end
